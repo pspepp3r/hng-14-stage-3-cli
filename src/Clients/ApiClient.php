@@ -73,6 +73,12 @@ final class ApiClient
         $this->printTable([$data['data']]);
     }
 
+    public function updateUserRole(string $id, string $role): void
+    {
+        $data = $this->request('PATCH', "/api/users/$id/role", ['json' => ['role' => $role]]);
+        echo $data['data']['message'] . "\n";
+    }
+
     public function exportProfiles(array $query): void
     {
         $query['format'] = 'csv';

@@ -62,6 +62,21 @@ final class CLI
         }
     }
 
+    private function handleUsers(?string $subCommand): void
+    {
+        switch ($subCommand) {
+            case 'update-role':
+                $id = $this->args[3] ?? null;
+                $role = $this->args[4] ?? null;
+                if (!$id || !$role) throw new \Exception("Usage: insighta users update-role <id> <admin|analyst>");
+                $this->api->updateUserRole($id, $role);
+                break;
+            default:
+                echo "Unknown users subcommand: $subCommand\n";
+                break;
+        }
+    }
+
     private function handleProfiles(?string $subCommand): void
     {
         switch ($subCommand) {
