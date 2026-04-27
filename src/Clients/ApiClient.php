@@ -12,11 +12,12 @@ final class ApiClient
 {
     private Client $client;
     private AuthClient $auth;
-    private string $backendUrl = 'http://localhost:8000';
+    private string $backendUrl;
 
     public function __construct(AuthClient $auth)
     {
         $this->auth = $auth;
+        $this->backendUrl = getenv('INSIGHTA_BACKEND_URL') ?: 'http://localhost:8000';
         $this->client = new Client([
             'base_uri' => $this->backendUrl,
             'headers' => [

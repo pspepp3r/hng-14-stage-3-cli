@@ -74,17 +74,17 @@ final class AuthClient
     private function startLocalServer(string $expectedState): ?string
     {
         $server = stream_socket_server("tcp://127.0.0.1:8080", $errno, $errstr);
-        
+
         if (!$server) {
             echo "Could not start local callback server: $errstr ($errno)\n";
             return null;
         }
-        
+
         $client = stream_socket_accept($server);
         $request = fread($client, 2048);
-        
+
         preg_match("/GET \/callback\?code=([^&]+)&state=([^& ]+)/", $request, $matches);
-        
+
         $code = $matches[1] ?? null;
         $state = $matches[2] ?? null;
 
@@ -125,7 +125,7 @@ final class AuthClient
     {
         if (!file_exists($this->storagePath)) return null;
         $creds = json_decode(file_get_contents($this->storagePath), true);
-        
+
         // Basic check for expiry could be done here if we decoded the JWT
         // For now, we'll just return it and let ApiClient handle refresh if 401 occurs
         return $creds['access_token'] ?? null;
@@ -151,7 +151,8 @@ final class AuthClient
                 $this->saveCredentials($data['data']);
                 return true;
             }
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+        }
 
         return false;
     }
@@ -168,10 +169,10 @@ final class AuthClient
     {
         $token = $this->getAccessToken();
         if (!$token) return null;
-        
+
         $parts = explode('.', $token);
         if (count($parts) < 2) return null;
-        
+
         $payload = json_decode(base64_decode($parts[1]), true);
         return [
             'id' => $payload['sub'],
