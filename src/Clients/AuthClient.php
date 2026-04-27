@@ -73,12 +73,15 @@ final class AuthClient
 
     private function startLocalServer(string $expectedState): ?string
     {
-        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-        socket_bind($socket, '127.0.0.1', 8080);
-        socket_listen($socket);
+        $server = stream_socket_server("tcp://127.0.0.1:8080", $errno, $errstr);
         
-        $client = socket_accept($socket);
-        $request = socket_read($client, 2048);
+        if (!$server) {
+            echo "Could not start local callback server: $errstr ($errno)\n";
+            return null;
+        }
+        
+        $client = stream_socket_accept($server);
+        $request = fread($client, 2048);
         
         preg_match("/GET \/callback\?code=([^&]+)&state=([^& ]+)/", $request, $matches);
         
@@ -86,9 +89,9 @@ final class AuthClient
         $state = $matches[2] ?? null;
 
         $response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<h1>Authentication Successful</h1><p>You can close this window now.</p>";
-        socket_write($client, $response, strlen($response));
-        socket_close($client);
-        socket_close($socket);
+        fwrite($client, $response);
+        fclose($client);
+        fclose($server);
 
         if ($state !== $expectedState) {
             echo "Invalid state returned.\n";
@@ -101,11 +104,12 @@ final class AuthClient
     private function openBrowser(string $url): void
     {
         if (PHP_OS_FAMILY === 'Windows') {
-            exec("start $url");
+            // Use double quotes to handle '&' in CMD/PowerShell
+            exec('start "" "' . $url . '"');
         } elseif (PHP_OS_FAMILY === 'Darwin') {
-            exec("open $url");
+            exec("open '$url'");
         } else {
-            exec("xdg-open $url");
+            exec("xdg-open '$url'");
         }
     }
 
