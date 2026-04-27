@@ -6,15 +6,20 @@ A globally installable command-line interface for the Insighta Labs+ platform.
 
 1. Clone the repository and navigate to the `cli` directory.
 2. Install dependencies:
+
    ```bash
    composer install
    ```
+
 3. Set environment variables (optional, defaults provided):
+
    ```bash
    GITHUB_CLI_CLIENT_ID=your_id
    INSIGHTA_BACKEND_URL=http://localhost:8000
    ```
+
 4. Run via PHP or link the binary:
+
    ```bash
    php bin/insighta help
    ```
@@ -22,6 +27,7 @@ A globally installable command-line interface for the Insighta Labs+ platform.
 ## Usage
 
 ### Authentication
+
 ```bash
 insighta login     # Opens browser for GitHub OAuth
 insighta logout    # Clears local credentials
@@ -29,6 +35,7 @@ insighta whoami    # Shows current logged-in user and role
 ```
 
 ### Profiles
+
 ```bash
 # List profiles with filters
 insighta profiles list --gender=male --country=NG
@@ -44,6 +51,7 @@ insighta profiles export --country=US
 ```
 
 ### Search
+
 ```bash
 insighta search "young females from nigeria"
 ```
@@ -51,6 +59,7 @@ insighta search "young females from nigeria"
 ## Credential Storage
 
 Credentials (JWT access and refresh tokens) are securely stored at:
+
 - **Windows:** `%USERPROFILE%/.insighta/credentials.json`
 - **Linux/macOS:** `~/.insighta/credentials.json`
 
